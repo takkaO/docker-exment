@@ -116,7 +116,7 @@ docker-compose -f docker-compose.yml -f docker-compose.https-portal.yml up
 
 #### 冗長構成でWebサーバー起動・ロードバランサーにhttps接続・MySQL構築
 
-.envの「EXMENT_DOCKER_HTTPS_TARGET_SERVER」の値を「balancer」に変更してください。
+.envの「EXMENT_DOCKER_HTTPS_TARGET_URL」の値を「http://balancer:80」に変更してください。
 
 ```
 docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-compose.mysql.yml -f docker-compose.https-portal.yml up --scale web=2
