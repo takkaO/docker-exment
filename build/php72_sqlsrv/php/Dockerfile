@@ -1,7 +1,7 @@
 FROM php:7.2-fpm
 
 # install php-ext
-RUN apt-get update && apt-get install -y git wget gnupg vim unzip libxml2-dev libpng-dev libzip-dev \
+RUN apt-get update && apt-get install -y git wget gnupg vim unzip libxml2-dev libpng-dev libzip-dev libonig-dev \
   && docker-php-ext-install mbstring dom gd zip \
   && apt-get clean
 
