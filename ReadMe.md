@@ -10,7 +10,7 @@ ExmentのDockerイメージです。
 
 - 使用するフォルダを選択します。buildフォルダ内の以下のフォルダから、構築したい環境により、使用するフォルダを選択します。
     - **php72_mysql** : PHP7.2, MySQLもしくはMariaDB
-        - **php72_sqlsrv** : PHP7.2, SQL Server
+    - **php72_sqlsrv** : PHP7.2, SQL Server
     - **php73_mysql** : PHP7.3, MySQLもしくはMariaDB
     - **php73_sqlsrv** : PHP7.3, SQL Server
     - **php74_mysql** : PHP7.4, MySQLもしくはMariaDB
@@ -197,4 +197,4 @@ docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-co
 
 
 ## Exmentの設定値を変更する場合
-「web/volumes/.env」ファイルが、Exmentのプロジェクトフォルダの「.env」ファイルに該当しますので、そちらを編集してください。
+「php/volumes/.env」ファイルが、Exmentのプロジェクトフォルダの「.env」ファイルに該当しますので、そちらを編集してください。
