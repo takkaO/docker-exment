@@ -10,11 +10,11 @@ ExmentのDockerイメージです。
 
 - 使用するフォルダを選択します。buildフォルダ内の以下のフォルダから、構築したい環境により、使用するフォルダを選択します。
     - **php72_mysql** : PHP7.2, MySQLもしくはMariaDB
-    - **php72_sqldrv** : PHP7.2, SQL Server
+        - **php72_sqlsrv** : PHP7.2, SQL Server
     - **php73_mysql** : PHP7.3, MySQLもしくはMariaDB
-    - **php73_sqldrv** : PHP7.3, SQL Server
+    - **php73_sqlsrv** : PHP7.3, SQL Server
     - **php74_mysql** : PHP7.4, MySQLもしくはMariaDB
-    - **php74_sqldrv** : PHP7.4, SQL Server
+    - **php74_sqlsrv** : PHP7.4, SQL Server
 
 - コンソールで、上記のフォルダを、カレントディレクトリとして遷移します。
 
@@ -173,14 +173,13 @@ docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-co
 
 - SQLServerのデータベース名を変更する場合、ファイル「sqlsrv/initdb.d/setup.sql」のデータベース名を変更してください。初期値は「exment_database」です。
 - データベース接続時のホスト名は「sqlsrv」になります。
+- ログインユーザー名は「sa」になります。
 
 | 設定値 | 初期値 | 説明 |
 | ---- | ---- | ---- |
 | EXMENT_DOCKER_SQLSRV_PID | Express | SQL Serverのエディションです。(Developer/Express/Standard/Enterprise/EnterpriseCore) |
 | EXMENT_DOCKER_SQLSRV_PORT | 1433 | SQL Serverにアクセスするポートです。 |
-| EXMENT_DOCKER_SQLSRV_ROOT_PASSWORD | JKnkdsaj#j3ks | rootアカウントのパスワードです。※8文字以上の複雑なパスワードである必要があります。 |
-| EXMENT_DOCKER_MYSQL_USER | exment_user | 作成する一般アカウントのユーザー名です。 |
-| EXMENT_DOCKER_MYSQL_PASSWORD | secret | 作成する一般アカウントのパスワードです。 |
+| EXMENT_DOCKER_SQLSRV_ROOT_PASSWORD | JKnkdsaj-j3ks | saアカウントのパスワードです。※8文字以上の複雑なパスワードである必要があります。 |
 
 
 #### PhpMyAdmin
