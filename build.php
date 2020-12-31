@@ -1,12 +1,19 @@
 <?php
 
+include_once("helper.php");
+
 const PHP_VERSIONS = ["7.2", "7.3", "7.4"];
 
-const DATABASES = ["mysql", "sqlsrv"];
+const DATABASES = ["mysql", "mariadb", "sqlsrv"];
 
 const IMGORE_FILES = [
     "mysql" => [
         'docker-compose.sqlsrv.yml',
+        'docker-compose.mariadb.yml',
+    ],
+    "mariadb" => [
+        'docker-compose.sqlsrv.yml',
+        'docker-compose.mysql.yml',
     ],
     "sqlsrv" => [
         'docker-compose.mariadb.yml',
@@ -18,6 +25,9 @@ const IMGORE_DIRS = [
     "mysql" => [
         'sqlsrv',
     ],
+    "mariadb" => [
+        'sqlsrv',
+    ],
     "sqlsrv" => [
         'mysql',
     ],
@@ -26,12 +36,26 @@ const IMGORE_DIRS = [
 const REPLACES = [
     'php_version' => 'replacePhpVersion',
     'apt_get_extend' => 'replaceAptGetExtend',
+    'php_test_path' => 'replacePhpTestPath',
+    'php_test_args' => 'replacePhpTestArgs',
+    'php_composer_for_test' => 'replaceComposerForTest',
+    'php_remove_env' => 'replaceRemoveEnv',
 ];
 
 
 $buildBasePath = path_join(dirname(__FILE__), 'build');
 if(!file_exists($buildBasePath)){
     mkdir($buildBasePath);
+}
+else{
+    $buildFiles = scandir('build');
+    foreach($buildFiles as $buildFile){
+        if(in_array($buildFile, ['.', '..'])){
+            continue;
+        }
+    
+        rmdirAll($buildBasePath . '/' . $buildFile);
+    }
 }
 
 
@@ -75,7 +99,7 @@ function copyFile($srcDirFullPath, $buildDirFullPath, $phpVersion, $database){
                 $fileContent = file_get_contents($srcFileFullPath);
                 foreach(REPLACES as $replaceKey => $replaceFunc)
                 {
-                    $fileContent = str_replace('${' . $replaceKey . '}', $replaceFunc($phpVersion, $database), $fileContent);
+                    $fileContent = str_replace('$#{' . $replaceKey . '}', $replaceFunc($phpVersion, $database), $fileContent);
                 }
                 file_put_contents(path_join($buildDirFullPath, $pathinfo['filename']), $fileContent);
             }
@@ -124,6 +148,107 @@ EOT;
 }
 
 
+function replaceComposerForTest($phpVersion, $database)
+{
+    $argvs = getArgvs();
+    if(!isset($argvs['test']) || !boolval($argvs['test'])){
+        return null;
+    }
+
+    return <<<EOT
+# Execute for test
+ARG DB_CONNECTION
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_DATABASE
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG APP_URL
+
+ENV APP_URL=\${APP_URL} DB_CONNECTION=\${DB_CONNECTION} DB_HOST=\${DB_HOST} DB_PORT=\${DB_PORT} DB_DATABASE=\${DB_DATABASE} DB_USERNAME=\${DB_USERNAME} DB_PASSWORD=\${DB_PASSWORD}
+# Now only support ja and Tokyo
+ENV APP_LOCALE=ja APP_TIMEZONE=Asia/Tokyo
+
+RUN composer require lcobucci/jwt=3.3.* && composer require symfony/css-selector=~4.2 && composer require laravel/browser-kit-testing=~4.2 && php artisan passport:keys
+
+COPY ./volumes/test.sh /var/www/exment
+RUN chmod -R +x /var/www/exment/test.sh
+EOT;
+}
+
+
+function replaceRemoveEnv($phpVersion, $database)
+{
+    $argvs = getArgvs();
+    if(isset($argvs['test']) && boolval($argvs['test'])){
+        return null;
+    }
+
+    return <<<EOT
+RUN rm /var/www/exment/.env
+EOT;
+}
+
+function replacePhpTestPath($phpVersion, $database)
+{
+    $argvs = getArgvs();
+
+    if(!isset($argvs['test']) || !boolval($argvs['test'])){
+        return '- ./php/volumes/.env:/var/www/exment/.env';
+    }
+    return null;
+}
+
+
+function replacePhpTestArgs($phpVersion, $database)
+{
+    $argvs = getArgvs();
+
+    if(!isset($argvs['test']) || !boolval($argvs['test'])){
+        return null;
+    }
+
+    if ($database == 'sqlsrv') {
+    return <<<EOT
+        - DB_CONNECTION=$database
+        - DB_HOST=$database
+        - DB_PORT=1433
+        - DB_DATABASE=exment_database
+        - DB_USERNAME=sa
+        - DB_PASSWORD=\${EXMENT_DOCKER_SQLSRV_ROOT_PASSWORD}
+        - APP_URL=http://localhost:\${EXMENT_DOCKER_HTTP_PORTS}
+EOT;
+    }
+    return <<<EOT
+        - DB_CONNECTION=$database
+        - DB_HOST=$database
+        - DB_PORT=3306
+        - DB_DATABASE=\${EXMENT_DOCKER_MYSQL_DATABASE}
+        - DB_USERNAME=\${EXMENT_DOCKER_MYSQL_USER}
+        - DB_PASSWORD=\${EXMENT_DOCKER_MYSQL_PASSWORD}
+        - APP_URL=http://localhost:\${EXMENT_DOCKER_HTTP_PORTS}
+EOT;
+}
+
+
+
+
+
+// common funcs ----------------------------------------------------
+
+function getArgvs(){
+    global $argv;
+
+    $result = [];
+    foreach($argv as $a){
+        if(strpos($a, '--') === 0){
+            $split = explode('=', str_replace('--', '', $a));
+            $result[$split[0]] = count($split) > 1 ? $split[1] : true;
+        }
+    }
+
+    return $result;
+}
 
 /**
  * Join FilePath.

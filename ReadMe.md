@@ -8,12 +8,15 @@ ExmentのDockerイメージです。
 
 - このリポジトリをダウンロードし、zipを解凍します。
 
-- 使用するフォルダを選択します。buildフォルダ内の以下のフォルダから、構築したい環境により、使用するフォルダを選択します。
-    - **php72_mysql** : PHP7.2, MySQLもしくはMariaDB
+- 使用するフォルダを選択します。buildフォルダ内の以下のフォルダから、構築したい環境により、使用するフォルダを選択します。  
+    - **php72_mysql** : PHP7.2, MySQL
+    - **php72_mariadb** : PHP7.2, MariaDB
     - **php72_sqlsrv** : PHP7.2, SQL Server
-    - **php73_mysql** : PHP7.3, MySQLもしくはMariaDB
+    - **php73_mysql** : PHP7.3, MySQL
+    - **php73_mariadb** : PHP7.3, MariaDB
     - **php73_sqlsrv** : PHP7.3, SQL Server
-    - **php74_mysql** : PHP7.4, MySQLもしくはMariaDB
+    - **php74_mysql** : PHP7.4, MySQL
+    - **php74_mariadb** : PHP7.4, MariaDB
     - **php74_sqlsrv** : PHP7.4, SQL Server
 
 - コンソールで、上記のフォルダを、カレントディレクトリとして遷移します。
@@ -56,7 +59,7 @@ docker-compose -f docker-compose.yml up
 起動時、「-f docker-compose.mysql.yml」を追加します。
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.mysql.yml up
+docker-compose -f docker-compose.mysql.yml -f docker-compose.yml up
 ```
 
 
@@ -65,7 +68,7 @@ docker-compose -f docker-compose.yml -f docker-compose.mysql.yml up
 起動時、「-f docker-compose.mariadb.yml」を追加します。
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.mariadb.yml up
+docker-compose -f docker-compose.mariadb.yml -f docker-compose.yml up
 ```
 
 
@@ -74,7 +77,7 @@ docker-compose -f docker-compose.yml -f docker-compose.mariadb.yml up
 起動時、「-f docker-compose.sqlsrv.yml」を追加します。
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.sqlsrv.yml up
+docker-compose -f docker-compose.sqlsrv.yml -f docker-compose.yml up
 ```
 
 
@@ -119,7 +122,7 @@ docker-compose -f docker-compose.yml -f docker-compose.https-portal.yml up
 .envの「EXMENT_DOCKER_HTTPS_TARGET_URL」の値を「http://balancer:80」に変更してください。
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-compose.mysql.yml -f docker-compose.https-portal.yml up --scale web=2
+docker-compose -f docker-compose.mysql.yml -f docker-compose.yml -f docker-compose.balancer.yml -f docker-compose.https-portal.yml up --scale web=2
 ```
 
 #### その他、複合して起動する場合
@@ -137,6 +140,8 @@ docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-co
 | ---- | ---- | ---- |
 | EXMENT_DOCKER_FRONT_DOMAIN | localhost | DockerのExmentにアクセスするためのドメインです。 |
 | EXMENT_DOCKER_HTTP_PORTS | 80 | DockerのExmentにhttpアクセスするポートです。※Webサーバーを冗長化する場合に、ポートを複数指定する場合には、"80-90"など、範囲指定を行ってください。 |
+| EXMENT_DOCKER_EXMENT_VERSION | * | インストールするExmentのバージョンを指定する場合、"dev-brunch"のように記入を行ってください。最新版の場合は、"*"と記入します。 |
+| EXMENT_DOCKER_LARAVEL_VERSION | 5.6.* | インストールするLaravelのバージョンを指定する場合、"6.*.*"のように記入を行ってください。 |
 
 
 #### https
@@ -198,3 +203,21 @@ docker-compose -f docker-compose.yml -f docker-compose.balancer.yml -f docker-co
 
 ## Exmentの設定値を変更する場合
 「php/volumes/.env」ファイルが、Exmentのプロジェクトフォルダの「.env」ファイルに該当しますので、そちらを編集してください。
+
+
+## ファイル構築
+リリースファイルは、以下のように構築してください。  
+
+- 以下のコマンドを実行してください。
+
+```
+php build.php {--test=1}
+```
+
+- srcフォルダに格納しているファイルを元に、buildフォルダにリリースファイルが作成されます。  
+※すでにある「build」フォルダの中身は削除されます。
+
+### コマンドの引数
+
+- ##### test  
+(オプション)リリースファイルを、Exmentのテスト用に構築します。詳細は[こちら](ExmentTest)をご確認ください。
