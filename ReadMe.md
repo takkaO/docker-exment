@@ -205,6 +205,33 @@ docker-compose -f docker-compose.mysql.yml -f docker-compose.yml -f docker-compo
 「php/volumes/.env」ファイルが、Exmentのプロジェクトフォルダの「.env」ファイルに該当しますので、そちらを編集してください。
 
 
+## ExmentアプリのDockerコンテナに接続する場合
+ログファイルの確認などの理由で、ExmentアプリのDockerコンテナに接続する場合、以下の手順をお試しください。
+
+- 以下のコマンドを実行してください。
+
+```
+docker ps
+```
+
+- 以下のような結果が表示されるので、「IMAGE」が「php72_mysql_php」になっているものを探します。（※PHPバージョンとデータベース名は、各自選択したものとしてください）  
+その後、その行のCONTAINER IDをコピーしてください。
+
+```
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                               NAMES
+6b55fdf9cde0   nginx:latest      "/docker-entrypoint.…"   15 minutes ago   Up 15 minutes   0.0.0.0:80->80/tcp                  php72_mysql_web_1
+211f83ee14e8   php72_mysql_php   "docker-php-entrypoi…"   15 minutes ago   Up 15 minutes   9000/tcp                            php72_mysql_php_1
+c11be3d2b27b   mysql:5.7         "docker-entrypoint.s…"   15 minutes ago   Up 14 minutes   0.0.0.0:3306->3306/tcp, 33060/tcp   php72_mysql_mysql_1
+```
+
+- 以下のコマンドを実行してください。
+
+```
+docker exec -it (コンテナID) bash
+```
+
+- コンテナに接続され、パスが「/var/www/exment」になっていれば成功です。
+
 ## ファイル構築
 リリースファイルは、以下のように構築してください。  
 
