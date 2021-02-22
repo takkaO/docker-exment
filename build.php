@@ -169,7 +169,7 @@ ENV APP_URL=\${APP_URL} DB_CONNECTION=\${DB_CONNECTION} DB_HOST=\${DB_HOST} DB_P
 # Now only support ja and Tokyo
 ENV APP_LOCALE=ja APP_TIMEZONE=Asia/Tokyo
 
-RUN composer require lcobucci/jwt=3.3.* && composer require symfony/css-selector=~4.2 && composer require laravel/browser-kit-testing=~4.2 && php artisan passport:keys
+RUN composer require symfony/css-selector=~4.2 && composer require laravel/browser-kit-testing=~5.2 && composer require dms/phpunit-arraysubset-asserts=~0.1 && composer require laravel/socialite=~5.1 && php artisan passport:keys
 
 COPY ./volumes/test.sh /var/www/exment
 RUN chmod -R +x /var/www/exment/test.sh
