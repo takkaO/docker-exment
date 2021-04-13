@@ -40,6 +40,8 @@ const REPLACES = [
     'php_test_args' => 'replacePhpTestArgs',
     'php_composer_for_test' => 'replaceComposerForTest',
     'php_remove_env' => 'replaceRemoveEnv',
+    'composer_require_exment' => 'replaceComposerRequireExment',
+    'package_provider_name' => 'replacePackageProviderName',
 ];
 
 
@@ -128,7 +130,7 @@ function replacePhpVersion($phpVersion, $database){
 function replaceAptGetExtend($phpVersion, $database)
 {
     if ($database == 'sqlsrv') {
-        return <<<EOT
+        $result = <<<EOT
 # Append ODBC Driver
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
   && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
@@ -138,10 +140,12 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
 
 
 # install driver
-RUN pecl install sqlsrv && pecl install pdo_sqlsrv \
-  && docker-php-ext-enable sqlsrv \
-  && docker-php-ext-enable pdo_sqlsrv
+
 EOT;
+
+$result .= $phpVersion == '7.2' ? 'RUN pecl install sqlsrv-5.8.1 && pecl install pdo_sqlsrv-5.8.1' : 'RUN pecl install sqlsrv && pecl install pdo_sqlsrv';
+$result .= ' && docker-php-ext-enable sqlsrv && docker-php-ext-enable pdo_sqlsrv';
+        return $result;
     }
 
     return 'RUN apt-get install -y default-mysql-client && docker-php-ext-install pdo_mysql';
@@ -170,6 +174,7 @@ ENV APP_URL=\${APP_URL} DB_CONNECTION=\${DB_CONNECTION} DB_HOST=\${DB_HOST} DB_P
 ENV APP_LOCALE=ja APP_TIMEZONE=Asia/Tokyo
 
 RUN composer require symfony/css-selector=~4.2 && composer require laravel/browser-kit-testing=~5.2 && composer require dms/phpunit-arraysubset-asserts=~0.1 && composer require laravel/socialite=~5.1 && php artisan passport:keys
+RUN composer require --dev nunomaduro/larastan=^0.5 && composer require pragmarx/google2fa && composer require simplesoftwareio/simple-qrcode=^2.0.0 && composer require aacotroneo/laravel-saml2 && composer require league/flysystem-sftp=~1.0 && composer require league/flysystem-aws-s3-v3=~1.0 && composer require league/flysystem-azure-blob-storage=~0.1.6
 
 COPY ./volumes/test.sh /var/www/exment
 RUN chmod -R +x /var/www/exment/test.sh
@@ -188,6 +193,30 @@ function replaceRemoveEnv($phpVersion, $database)
 RUN rm /var/www/exment/.env
 EOT;
 }
+
+function replaceComposerRequireExment($phpVersion, $database)
+{
+    $argvs = getArgvs();
+    if(!isset($argvs['test']) || !boolval($argvs['test'])){
+        return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require exceedone/exment';
+    }
+
+    $provider = replacePackageProviderName($phpVersion, $database);
+    return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require ' . $provider . '/exment=${EXMENT_VERSION}';
+}
+
+function replacePackageProviderName($phpVersion, $database)
+{
+    $argvs = getArgvs();
+    if(!isset($argvs['provider'])){
+        return 'exceedone';
+    }
+    else{
+        return $argvs['provider'];
+    }
+}
+
+
 
 function replacePhpTestPath($phpVersion, $database)
 {

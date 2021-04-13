@@ -13,6 +13,7 @@ while [ $I -lt 10 ]; do
         ./vendor/bin/phpunit ./vendor/exceedone/exment/tests/Browser >> ./storage/logs/test.log
         ./vendor/bin/phpunit ./vendor/exceedone/exment/tests/Unit >> ./storage/logs/test.log
         ./vendor/bin/phpunit ./vendor/exceedone/exment/tests/Feature >> ./storage/logs/test.log
+        ./vendor/bin/phpstan analyse >> ./storage/logs/test.log
         exit
     fi
     I=`expr $I + 1`

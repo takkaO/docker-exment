@@ -40,6 +40,6 @@ foreach($dirs as $index => $dir){
     replaceEnvPort($dbName, $fullPath, $index);
 
     // call docker-compose
-    exec_async("docker-compose -f docker-compose.{$dbName}.yml -f docker-compose.yml build");
+    exec_async("docker-compose -f docker-compose.{$dbName}.yml -f docker-compose.yml build --no-cache");
 }
 
