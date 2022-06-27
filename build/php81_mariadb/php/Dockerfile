@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 ARG LARAVEL_VERSION="6.*"
 ARG EXMENT_VERSION="~4.0"
 
