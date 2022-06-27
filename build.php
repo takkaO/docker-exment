@@ -2,7 +2,7 @@
 
 include_once("helper.php");
 
-const PHP_VERSIONS = ["7.2", "7.3", "7.4"];
+const PHP_VERSIONS = ["7.3", "7.4"];
 
 const DATABASES = ["mysql", "mariadb", "sqlsrv"];
 
