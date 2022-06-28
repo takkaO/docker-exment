@@ -9,12 +9,12 @@ ExmentのDockerイメージです。
 - このリポジトリをダウンロードし、zipを解凍します。
 
 - 使用するフォルダを選択します。buildフォルダ内の以下のフォルダから、構築したい環境により、使用するフォルダを選択します。  
-    - **php73_mysql** : PHP7.3, MySQL
-    - **php73_mariadb** : PHP7.3, MariaDB
-    - **php73_sqlsrv** : PHP7.3, SQL Server
-    - **php74_mysql** : PHP7.4, MySQL
-    - **php74_mariadb** : PHP7.4, MariaDB
-    - **php74_sqlsrv** : PHP7.4, SQL Server
+    - **php80_mysql** : PHP8.0, MySQL
+    - **php80_mariadb** : PHP8.0, MariaDB
+    - **php80_sqlsrv** : PHP8.0, SQL Server
+    - **php81_mysql** : PHP8.1, MySQL
+    - **php81_mariadb** : PHP8.1, MariaDB
+    - **php81_sqlsrv** : PHP8.1, SQL Server
 
 - コンソールで、上記のフォルダを、カレントディレクトリとして遷移します。
 
