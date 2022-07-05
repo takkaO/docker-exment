@@ -198,11 +198,11 @@ function replaceComposerRequireExment($phpVersion, $database)
 {
     $argvs = getArgvs();
     if(!isset($argvs['test']) || !boolval($argvs['test'])){
-        return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require exceedone/exment';
+        return 'RUN composer require exceedone/exment=${EXMENT_VERSION}';
     }
 
     $provider = replacePackageProviderName($phpVersion, $database);
-    return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require ' . $provider . '/exment=${EXMENT_VERSION}';
+    return 'RUN composer require ' . $provider . '/exment=${EXMENT_VERSION}';
 }
 
 function replacePackageProviderName($phpVersion, $database)
