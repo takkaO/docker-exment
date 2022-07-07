@@ -19,6 +19,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN mkdir /var/www/exment
 WORKDIR /var/www/exment
 RUN composer create-project laravel/laravel=${LARAVEL_VERSION} .
+RUN composer config --no-plugins allow-plugins.kylekatarnls/update-helper true
 RUN composer require psr/simple-cache=^2.0
 $#{composer_require_exment}
 
