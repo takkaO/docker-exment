@@ -19,6 +19,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN mkdir /var/www/exment
 WORKDIR /var/www/exment
 RUN COMPOSER_MEMORY_LIMIT=-1 composer create-project laravel/laravel=${LARAVEL_VERSION} .
+RUN composer config --no-plugins allow-plugins.kylekatarnls/update-helper true
 RUN COMPOSER_MEMORY_LIMIT=-1 composer require exceedone/exment
 
 RUN php artisan vendor:publish --provider="Exceedone\\Exment\\ExmentServiceProvider"
