@@ -1,6 +1,6 @@
 FROM php:8.1-fpm
-ARG LARAVEL_VERSION="8.*"
-ARG EXMENT_VERSION="~4.4"
+ARG LARAVEL_VERSION="9.*"
+ARG EXMENT_VERSION="~5.0"
 
 # install php-ext
 RUN apt-get update && apt-get install -y git wget gnupg vim unzip libxml2-dev libpng-dev libzip-dev libonig-dev \
