@@ -2,7 +2,7 @@
 
 include_once("helper.php");
 
-const PHP_VERSIONS = ["7.3", "7.4"];
+const PHP_VERSIONS = ["8.0", "8.1"];
 
 const DATABASES = ["mysql", "mariadb", "sqlsrv"];
 
@@ -133,7 +133,7 @@ function replaceAptGetExtend($phpVersion, $database)
         $result = <<<EOT
 # Append ODBC Driver
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-  && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+  && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
   && apt-get update \
   && ACCEPT_EULA=Y apt-get install -y msodbcsql17 mssql-tools \
   && apt-get install -y unixodbc-dev libgssapi-krb5-2
@@ -156,7 +156,7 @@ function replaceComposerForTest($phpVersion, $database)
 {
     $argvs = getArgvs();
     if(!isset($argvs['test']) || !boolval($argvs['test'])){
-        return null;
+        return '';
     }
 
     return <<<EOT
@@ -186,7 +186,7 @@ function replaceRemoveEnv($phpVersion, $database)
 {
     $argvs = getArgvs();
     if(isset($argvs['test']) && boolval($argvs['test'])){
-        return null;
+        return '';;
     }
 
     return <<<EOT
@@ -198,7 +198,7 @@ function replaceComposerRequireExment($phpVersion, $database)
 {
     $argvs = getArgvs();
     if(!isset($argvs['test']) || !boolval($argvs['test'])){
-        return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require exceedone/exment';
+        return 'RUN COMPOSER_MEMORY_LIMIT=-1 composer require exceedone/exment=${EXMENT_VERSION}';
     }
 
     $provider = replacePackageProviderName($phpVersion, $database);
@@ -225,7 +225,7 @@ function replacePhpTestPath($phpVersion, $database)
     if(!isset($argvs['test']) || !boolval($argvs['test'])){
         return '- ./php/volumes/.env:/var/www/exment/.env';
     }
-    return null;
+    return '';
 }
 
 
@@ -234,7 +234,7 @@ function replacePhpTestArgs($phpVersion, $database)
     $argvs = getArgvs();
 
     if(!isset($argvs['test']) || !boolval($argvs['test'])){
-        return null;
+        return '';
     }
 
     if ($database == 'sqlsrv') {
