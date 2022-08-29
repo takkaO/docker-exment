@@ -138,7 +138,7 @@ docker-compose -f docker-compose.mysql.yml -f docker-compose.yml -f docker-compo
 | EXMENT_DOCKER_FRONT_DOMAIN | localhost | DockerのExmentにアクセスするためのドメインです。 |
 | EXMENT_DOCKER_HTTP_PORTS | 80 | DockerのExmentにhttpアクセスするポートです。※Webサーバーを冗長化する場合に、ポートを複数指定する場合には、"80-90"など、範囲指定を行ってください。 |
 | EXMENT_DOCKER_EXMENT_VERSION | * | インストールするExmentのバージョンを指定する場合、"dev-brunch"のように記入を行ってください。最新版の場合は、"*"と記入します。 |
-| EXMENT_DOCKER_LARAVEL_VERSION | 5.6.* | インストールするLaravelのバージョンを指定する場合、"6.*.*"のように記入を行ってください。 |
+| EXMENT_DOCKER_LARAVEL_VERSION | 9.* | インストールするLaravelのバージョンを指定する場合、"9.*.*"のように記入を行ってください。 |
 
 
 #### https
